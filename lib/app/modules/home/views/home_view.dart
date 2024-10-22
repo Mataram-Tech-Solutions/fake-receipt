@@ -13,8 +13,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  // Access the controller using Get.find() or Get.put() if you haven't already
-  final HomeController controller = Get.find<HomeController>();
+
   final BluetoothSettingController bluetoothController = Get.put(BluetoothSettingController());
 
 

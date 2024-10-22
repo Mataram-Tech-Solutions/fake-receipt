@@ -11,8 +11,12 @@ class PertaminaView extends StatefulWidget {
 
 class _PertaminaViewState extends State<PertaminaView> {
   final PertaminaController controller = Get.put(PertaminaController());
-  final BluetoothSettingController bluetoothController = Get.put(BluetoothSettingController());
-
+final BluetoothSettingController bluetoothController = Get.find<BluetoothSettingController>();
+  @override
+  void initState() {
+    super.initState();
+    // controller.loadData(); // Muat data saat view diinisialisasi
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,21 +42,21 @@ class _PertaminaViewState extends State<PertaminaView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _buildTextField("ID Nota", (value) => controller.idNota.value = value),
-              _buildTextField("Alamat 1", (value) => controller.alamat1.value = value),
-              _buildTextField("Alamat 2", (value) => controller.alamat2.value = value),
-              _buildTextField("Shift", (value) => controller.shift.value = value),
-              _buildTextField("No. Transaksi", (value) => controller.noTransaksi.value = value),
-              _buildTextField("Tanggal", (value) => controller.tanggal.value = value),
-              _buildTextField("Waktu", (value) => controller.waktu.value = value),
-              _buildTextField("Pompa", (value) => controller.pompa.value = value),
-              _buildTextField("Nama Produk", (value) => controller.namaProduk.value = value),
-              _buildTextField("Harga/Liter", (value) => controller.hargaLiter.value = value),
-              _buildTextField("Volume", (value) => controller.volume.value = value),
-              _buildTextField("Total Harga", (value) => controller.totalHarga.value = value),
-              _buildTextField("Operator", (value) => controller.operatorName.value = value),
-              _buildTextField("Cash", (value) => controller.cash.value = value),
-              _buildTextField("No. Plat", (value) => controller.noPlat.value = value),
+              _buildTextField("ID Nota", controller.idNota),
+              _buildTextField("Alamat 1", controller.alamat1),
+              _buildTextField("Alamat 2", controller.alamat2),
+              _buildTextField("Shift", controller.shift),
+              _buildTextField("No. Transaksi", controller.noTransaksi),
+              _buildTextField("Tanggal", controller.tanggal),
+              _buildTextField("Waktu", controller.waktu),
+              _buildTextField("Pompa", controller.pompa),
+              _buildTextField("Nama Produk", controller.namaProduk),
+              _buildTextField("Harga/Liter", controller.hargaLiter),
+              _buildTextField("Volume", controller.volume),
+              _buildTextField("Total Harga", controller.totalHarga),
+              _buildTextField("Operator", controller.operatorName),
+              _buildTextField("Cash", controller.cash),
+              _buildTextField("No. Plat", controller.noPlat),
             ],
           ),
         ),
@@ -83,10 +87,11 @@ class _PertaminaViewState extends State<PertaminaView> {
   }
 
   // Fungsi untuk membangun TextFormField untuk setiap input
-  Widget _buildTextField(String label, Function(String) onChanged) {
+  Widget _buildTextField(String label, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: TextFormField(
+        controller: controller, // Menggunakan controller untuk setiap field
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(color: Colors.white),
@@ -97,7 +102,6 @@ class _PertaminaViewState extends State<PertaminaView> {
           ),
         ),
         style: TextStyle(color: Colors.white),
-        onChanged: onChanged, // Simpan input ke controller
       ),
     );
   }

@@ -58,14 +58,8 @@ dependency_overrides:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_native_splash: ^2.2.16
 
-flutter_native_splash:
-    color: "#FFFFFF"  # Warna background splash screen
-    image: assets/logo.png  # Gambar yang ditampilkan
-    android: true
-    ios: true
-    web: true
+
 
 
   # The "flutter_lints" package below contains a set of recommended lints to
@@ -93,6 +87,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/logo.png
+    - assets/logo2.png
     - assets/images/pertamina.png
     - assets/images/pertamina_print.png
     - assets/images/coba2.png

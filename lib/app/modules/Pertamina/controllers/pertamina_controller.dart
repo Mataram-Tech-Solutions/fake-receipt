@@ -1,32 +1,33 @@
 import 'dart:typed_data'; // Pastikan ini diimpor
 import 'dart:io'; // Pastikan ini diimpor
-import 'package:blue_thermal_printer/blue_thermal_printer.dart';
 import 'package:esc_pos_utils_plus/esc_pos_utils_plus.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:print_bluetooth_thermal/print_bluetooth_thermal.dart';
 import 'package:get/get.dart';
 import 'package:image/image.dart' as img; // Perbaiki menjadi yang benar
 import 'package:path_provider/path_provider.dart';
-// import 'package:esc_pos_utils/esc_pos_utils.dart'; // Pastikan Anda menggunakan library ESC/POS yang mendukung
 import 'package:project_fake_receipt/app/modules/BluetoothSetting/controllers/bluetooth_setting_controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class PertaminaController extends GetxController {
-  var idNota = ''.obs;
-  var alamat1 = ''.obs;
-  var alamat2 = ''.obs;
-  var shift = ''.obs;
-  var noTransaksi = ''.obs;
-  var tanggal = ''.obs;
-  var waktu = ''.obs;
-  var pompa = ''.obs;
-  var namaProduk = ''.obs;
-  var hargaLiter = ''.obs;
-  var volume = ''.obs;
-  var totalHarga = ''.obs;
-  var operatorName = ''.obs; // Mengganti nama dari operator menjadi operatorName
-  var cash = ''.obs;
-  var noPlat = ''.obs;
-  BlueThermalPrinter printer = BlueThermalPrinter.instance;
+ var idNota = TextEditingController();
+  var alamat1 = TextEditingController();
+  var alamat2 = TextEditingController();
+  var shift = TextEditingController();
+  var noTransaksi = TextEditingController();
+  var tanggal = TextEditingController();
+  var waktu = TextEditingController();
+  var pompa = TextEditingController();
+  var namaProduk = TextEditingController();
+  var hargaLiter = TextEditingController();
+  var volume = TextEditingController();
+  var totalHarga = TextEditingController();
+  var operatorName = TextEditingController();
+  var cash = TextEditingController();
+  var noPlat = TextEditingController();
+
+  // BlueThermalPrinter printer = BlueThermalPrinter.instance;
   final BluetoothSettingController bluetoothController = Get.put(BluetoothSettingController());
 
   final count = 0.obs;
@@ -34,6 +35,7 @@ class PertaminaController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
+    // loadData();
   }
 
   @override
@@ -51,23 +53,44 @@ class PertaminaController extends GetxController {
   Future<void> saveData() async {
     // Gunakan ukuran kertas 58mm
     bool connectionStatus = await PrintBluetoothThermal.connectionStatus;
-    print("Status Koneksi: $connectionStatus");
-    print("ID Nota: ${idNota.value}");
-    print("Alamat 1: ${alamat1.value}");
-    print("Alamat 2: ${alamat2.value}");
-    print("Shift: ${shift.value}");
-    print("No. Transaksi: ${noTransaksi.value}");
-    print("Tanggal: ${tanggal.value}");
-    print("Waktu: ${waktu.value}");
-    print("Pulau/Pompa: ${pompa.value}");
-    print("Nama Produk: ${namaProduk.value}");
-    print("Harga/Liter: ${hargaLiter.value}");
-    print("Volume: ${volume.value}");
-    print("Total Harga: ${totalHarga.value}");
-    print("Operator: ${operatorName.value}");
-    print("Cash: ${cash.value}");
-    print("No. Plat: ${noPlat.value}");
-
+//     print("Status Koneksi: $connectionStatus");
+//     print("ID Nota: ${idNota.text}");
+//     print("Alamat 1: ${alamat1.text}");
+//     print("Alamat 2: ${alamat2.text}");
+//     print("Shift: ${shift.text}");
+//     print("No. Transaksi: ${noTransaksi.text}");
+//     print("Tanggal: ${tanggal.text}");
+//     print("Waktu: ${waktu.text}");
+//     print("Pulau/Pompa: ${pompa.text}");
+   
+//  print("Nama Produk: ${namaProduk.text}");
+//     print("Harga/Liter: ${hargaLiter.text}");
+//     print("Volume: ${volume.text}");
+//     print("Total Harga: ${totalHarga.text}");
+//     print("Operator: ${operatorName.text}");
+//     print("Cash: ${cash.text}");
+//     print("No. Plat: ${noPlat.text}");
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     bool result = await prefs.setString('idNota', idNota.text);
+//     if (result) {
+//       print('idNota berhasil disimpan');
+//     } else {
+//       print('Gagal menyimpan idNota');
+//     }
+//     await prefs.setString('alamat1', alamat1.text);
+//     await prefs.setString('alamat2', alamat2.text);
+//     await prefs.setString('shift', shift.text);
+//     await prefs.setString('noTransaksi', noTransaksi.text);
+//     await prefs.setString('tanggal', tanggal.text);
+//     await prefs.setString('waktu', waktu.text);
+//     await prefs.setString('pompa', pompa.text);
+//     await prefs.setString('namaProduk', namaProduk.text);
+//     await prefs.setString('hargaLiter', hargaLiter.text);
+//     await prefs.setString('volume', volume.text);
+//     await prefs.setString('totalHarga', totalHarga.text);
+//     await prefs.setString('operatorName', operatorName.text);
+//     await prefs.setString('cash', cash.text);
+//     await prefs.setString('noPlat', noPlat.text);
     try {
       if (connectionStatus) {
         List<int> bytesToPrint = [];
@@ -93,7 +116,7 @@ class PertaminaController extends GetxController {
         await bluetoothController.printer.printImage(file.path);
 
         bytesToPrint += generator.text(
-          idNota.value, // Teks normal
+          idNota.text, // Teks normal
           styles: PosStyles(
             align: PosAlign.center,
             bold: true,
@@ -103,7 +126,7 @@ class PertaminaController extends GetxController {
         );
 
         bytesToPrint += generator.text(
-          alamat1.value, // Teks normal
+          alamat1.text, // Teks normal
           styles: PosStyles(
             align: PosAlign.center,
             bold: false,
@@ -113,7 +136,7 @@ class PertaminaController extends GetxController {
         );
 
         bytesToPrint += generator.text(
-          alamat2.value, // Teks normal
+          alamat2.text, // Teks normal
           styles: PosStyles(
             align: PosAlign.center,
             bold: false,
@@ -123,7 +146,7 @@ class PertaminaController extends GetxController {
         );
 
         bytesToPrint += generator.text(
-          'Shift : ${shift.value}    No. Trans : ${noTransaksi.value}', // Teks normal
+          'Shift : ${shift.text}    No. Trans : ${noTransaksi.text}', // Teks normal
           styles: PosStyles(
             align: PosAlign.center,
             bold: false,
@@ -133,7 +156,7 @@ class PertaminaController extends GetxController {
         );
 
         bytesToPrint += generator.text(
-          'Waktu : ${tanggal.value}  ${waktu.value}   ', // Teks normal
+          'Waktu : ${tanggal.text}  ${waktu.text}   ', // Teks normal
           styles: PosStyles(
             align: PosAlign.center,
             bold: false,
@@ -152,9 +175,9 @@ class PertaminaController extends GetxController {
           ),
         );
 
-        String pompaText = pompa.value.length == 1
-            ? 'Pulau/Pompa : ${pompa.value}                '  // Tambahkan 1 spasi ekstra untuk 1 digit
-            : 'Pulau/Pompa : ${pompa.value}               ';  // Jika 2 digit, gunakan jumlah spasi biasa
+        String pompaText = pompa.text.length == 1
+            ? 'Pulau/Pompa : ${pompa.text}                '  // Tambahkan 1 spasi ekstra untuk 1 digit
+            : 'Pulau/Pompa : ${pompa.text}               ';  // Jika 2 digit, gunakan jumlah spasi biasa
 
         bytesToPrint += generator.text(
           pompaText, // Teks yang disesuaikan dengan panjang nilai pompa
@@ -170,16 +193,16 @@ class PertaminaController extends GetxController {
 
         // Hitung jumlah karakter yang ada setelah "Nama Produk : "
         String baseText = 'Nama Produk : ';
-        int spaceLength = totalLength - (baseText.length + namaProduk.value.length);
+        int spaceLength = totalLength - (baseText.length + namaProduk.text.length);
 
-        // Jika jumlah spasi negatif (karena namaProduk.value terlalu panjang), setel ke 0
+        // Jika jumlah spasi negatif (karena namaProduk.text terlalu panjang), setel ke 0
         spaceLength = spaceLength > 0 ? spaceLength : 0;
 
         // Buat string spasi dengan panjang yang dihitung
         String spaces = ' ' * spaceLength;
 
         // Gabungkan teks akhir dengan spasi
-        String finalText = 'Nama Produk : ${namaProduk.value}$spaces';
+        String finalText = 'Nama Produk : ${namaProduk.text}$spaces';
 
         bytesToPrint += generator.text(
           finalText, // Teks dengan spasi yang disesuaikan
@@ -191,9 +214,9 @@ class PertaminaController extends GetxController {
           ),
         );
 
-        String hargaLiterText = hargaLiter.value.length == 5
-            ? 'Harga/Liter : Rp. ${hargaLiter.value}        '  // Tambahkan 1 spasi ekstra untuk 5 digit
-            : 'Harga/Liter : Rp. ${hargaLiter.value}       ';  // Jika 6 digit, gunakan jumlah spasi biasa
+        String hargaLiterText = hargaLiter.text.length == 5
+            ? 'Harga/Liter : Rp. ${hargaLiter.text}        '  // Tambahkan 1 spasi ekstra untuk 5 digit
+            : 'Harga/Liter : Rp. ${hargaLiter.text}       ';  // Jika 6 digit, gunakan jumlah spasi biasa
 
         bytesToPrint += generator.text(
           hargaLiterText, // Teks yang disesuaikan dengan panjang nilai pompa
@@ -207,16 +230,16 @@ class PertaminaController extends GetxController {
 
         int totalvolLength = 30; // Misal total panjang karakter yang diinginkan adalah 40
         String basevolText = 'Volume      : (L)';
-        int spacevolLength = totalvolLength - (basevolText.length + volume.value.length);
+        int spacevolLength = totalvolLength - (basevolText.length + volume.text.length);
 
-        // Jika jumlah spasi negatif (karena namaProduk.value terlalu panjang), setel ke 0
+        // Jika jumlah spasi negatif (karena namaProduk.text terlalu panjang), setel ke 0
         spacevolLength = spacevolLength > 0 ? spacevolLength : 0;
 
         // Buat string spasi dengan panjang yang dihitung
         String spacesvol = ' ' * spacevolLength;
 
         // Gabungkan teks akhir dengan spasi
-        String finalvolText = 'Volume      : (L) ${volume.value}$spacesvol';
+        String finalvolText = 'Volume      : (L) ${volume.text}$spacesvol';
 
         bytesToPrint += generator.text(
           finalvolText, // Teks dengan spasi yang disesuaikan
@@ -230,16 +253,16 @@ class PertaminaController extends GetxController {
 
         int totalharLength = 30; // Misal total panjang karakter yang diinginkan adalah 40
         String baseharText = 'Total Harga : Rp.';
-        int spaceharLength = totalharLength - (baseharText.length + totalHarga.value.length);
+        int spaceharLength = totalharLength - (baseharText.length + totalHarga.text.length);
 
-        // Jika jumlah spasi negatif (karena namaProduk.value terlalu panjang), setel ke 0
+        // Jika jumlah spasi negatif (karena namaProduk.text terlalu panjang), setel ke 0
         spaceharLength = spaceharLength > 0 ? spaceharLength : 0;
 
         // Buat string spasi dengan panjang yang dihitung
         String spaceshar = ' ' * spaceharLength;
 
         // Gabungkan teks akhir dengan spasi
-        String finalharText = 'Total harga : Rp. ${totalHarga.value}$spaceshar';
+        String finalharText = 'Total harga : Rp. ${totalHarga.text}$spaceshar';
 
         bytesToPrint += generator.text(
           finalharText, // Teks dengan spasi yang disesuaikan
@@ -253,16 +276,16 @@ class PertaminaController extends GetxController {
 
         int totalopLength = 31; // Misal total panjang karakter yang diinginkan adalah 40
         String baseopText = 'Operator    : ';
-        int spaceopLength = totalopLength - (baseopText.length + operatorName.value.length);
+        int spaceopLength = totalopLength - (baseopText.length + operatorName.text.length);
 
-        // Jika jumlah spasi negatif (karena namaProduk.value terlalu panjang), setel ke 0
+        // Jika jumlah spasi negatif (karena namaProduk.text terlalu panjang), setel ke 0
         spaceopLength = spaceopLength > 0 ? spaceopLength : 0;
 
         // Buat string spasi dengan panjang yang dihitung
         String spacesop = ' ' * spaceopLength;
 
         // Gabungkan teks akhir dengan spasi
-        String finalopText = 'Operator    : ${operatorName.value}$spacesop';
+        String finalopText = 'Operator    : ${operatorName.text}$spacesop';
 
         bytesToPrint += generator.text(
           finalopText, // Teks dengan spasi yang disesuaikan
@@ -296,8 +319,8 @@ class PertaminaController extends GetxController {
 
         int totalcashLength = 29; // Total panjang yang diinginkan untuk teks
 
-// Hitung jumlah digit dari cash.value
-        int cashLength = cash.value.length;
+// Hitung jumlah digit dari cash.text
+        int cashLength = cash.text.length;
 
 // Hitung jumlah spasi yang diperlukan
         int spacecashLength = totalcashLength - cashLength;
@@ -306,7 +329,7 @@ class PertaminaController extends GetxController {
         String spacescash = ' ' * spacecashLength;
 
 // Gabungkan spasi dengan nilai cash
-        String finalcashText = '$spacescash${cash.value}';
+        String finalcashText = '$spacescash${cash.text}';
 
         bytesToPrint += generator.text(
           finalcashText, // Teks yang sudah digabung dengan spasi
@@ -330,16 +353,16 @@ class PertaminaController extends GetxController {
 
         int totalplLength = 31; // Misal total panjang karakter yang diinginkan adalah 40
         String baseplText = 'Operator    : ';
-        int spaceplLength = totalplLength - (baseplText.length + noPlat.value.length);
+        int spaceplLength = totalplLength - (baseplText.length + noPlat.text.length);
 
-        // Jika jumlah spasi negatif (karena namaProduk.value terlalu panjang), setel ke 0
+        // Jika jumlah spasi negatif (karena namaProduk.text terlalu panjang), setel ke 0
         spaceplLength = spaceplLength > 0 ? spaceplLength : 0;
 
         // Buat string spasi dengan panjang yang dihitung
         String spacespl = ' ' * spaceplLength;
 
         // Gabungkan teks akhir dengan spasi
-        String finalplText = 'No. Plat    : ${noPlat.value}$spacespl';
+        String finalplText = 'No. Plat    : ${noPlat.text}$spacespl';
 
         bytesToPrint += generator.text(
           finalplText, // Teks dengan spasi yang disesuaikan
@@ -456,5 +479,50 @@ class PertaminaController extends GetxController {
       print("Error saat mencetak: $e");
     }
   }
+
+  // Future<void> saveDataform() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //    bool result = await prefs.setString('idNota', idNota.text);
+  // if (result) {
+  //   print('idNota berhasil disimpan');
+  // } else {
+  //   print('Gagal menyimpan idNota');
+  // }
+  //   await prefs.setString('idNota', idNota.text);
+  //   await prefs.setString('alamat1', alamat1.text);
+  //   await prefs.setString('alamat2', alamat2.text);
+  //   await prefs.setString('shift', shift.text);
+  //   await prefs.setString('noTransaksi', noTransaksi.text);
+  //   await prefs.setString('tanggal', tanggal.text);
+  //   await prefs.setString('waktu', waktu.text);
+  //   await prefs.setString('pompa', pompa.text);
+  //   await prefs.setString('namaProduk', namaProduk.text);
+  //   await prefs.setString('hargaLiter', hargaLiter.text);
+  //   await prefs.setString('volume', volume.text);
+  //   await prefs.setString('totalHarga', totalHarga.text);
+  //   await prefs.setString('operatorName', operatorName.text);
+  //   await prefs.setString('cash', cash.text);
+  //   await prefs.setString('noPlat', noPlat.text);
+  // }
+
+  // Future<void> loadData() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  // idNota.text = prefs.getString('idNota') ?? '';
+  //   alamat1.text = prefs.getString('alamat1') ?? '';
+  //   alamat2.text = prefs.getString('alamat2') ?? '';
+  //   shift.text = prefs.getString('shift') ?? '';
+  //   noTransaksi.text = prefs.getString('noTransaksi') ?? '';
+  //   tanggal.text = prefs.getString('tanggal') ?? '';
+  //   waktu.text = prefs.getString('waktu') ?? '';
+  //   pompa.text = prefs.getString('pompa') ?? '';
+  //   namaProduk.text = prefs.getString('namaProduk') ?? '';
+  //   hargaLiter.text = prefs.getString('hargaLiter') ?? '';
+  //   volume.text = prefs.getString('volume') ?? '';
+  //   totalHarga.text = prefs.getString('totalHarga') ?? '';
+  //   operatorName.text = prefs.getString('operatorName') ?? '';
+  //   cash.text = prefs.getString('cash') ?? '';
+  //   noPlat.text = prefs.getString('noPlat') ?? '';
+  // }
+
 
 }

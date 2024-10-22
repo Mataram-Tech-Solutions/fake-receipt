@@ -7,6 +7,7 @@ class BluetoothSettingController extends GetxController {
   var isConnected = false.obs;
   BluetoothDevice? connectedDevice; // Perangkat Bluetooth yang terhubung
   BlueThermalPrinter printer = BlueThermalPrinter.instance;
+  // BlueThermalPrinter printer = BlueThermalPrinter.instance;
 
   @override
   void onInit() {

@@ -1,12 +1,14 @@
 import 'package:get/get.dart';
+import 'package:project_fake_receipt/app/modules/home/views/home_view.dart';
 
 class SplashPageController extends GetxController {
-  //TODO: Implement SplashPageController
+ //TODO: Implement SplahsScreenController
 
   final count = 0.obs;
   @override
   void onInit() {
     super.onInit();
+    _navigateToNextPage();
   }
 
   @override
@@ -19,5 +21,15 @@ class SplashPageController extends GetxController {
     super.onClose();
   }
 
-  void increment() => count.value++;
+  void _navigateToNextPage() {
+    Future.delayed(const Duration(seconds: 5), () {
+      print("Navigating to HomeView");
+      Get.off(
+        () => HomeView(),
+        transition: Transition.upToDown, // Menambahkan animasi geser
+        duration: const Duration(milliseconds: 1200), // Durasi animasi
+      );
+    });
+  }
 }
+
