@@ -25,8 +25,8 @@ class JsbController extends GetxController {
   var serialNumber = ''.obs;
   var sisaSaldo = ''.obs;
   var peringatan = ''.obs;
-  BlueThermalPrinter printer = BlueThermalPrinter.instance;
   final BluetoothSettingController bluetoothController = Get.put(BluetoothSettingController());
+
 
   final count = 0.obs;
   @override
@@ -250,6 +250,8 @@ class JsbController extends GetxController {
 
 
         print("Data berhasil dicetak di printer.");
+        await PrintBluetoothThermal.disconnect;
+        await PrintBluetoothThermal.connect(macPrinterAddress: '66:32:20:59:77:3F');
       } else {
         print("Printer tidak terhubung.");
       }

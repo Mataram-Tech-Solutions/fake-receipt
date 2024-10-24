@@ -27,7 +27,6 @@ class PertaminaController extends GetxController {
   var cash = TextEditingController();
   var noPlat = TextEditingController();
 
-  // BlueThermalPrinter printer = BlueThermalPrinter.instance;
   final BluetoothSettingController bluetoothController = Get.put(BluetoothSettingController());
 
   final count = 0.obs;
@@ -35,7 +34,6 @@ class PertaminaController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    // loadData();
   }
 
   @override
@@ -51,46 +49,7 @@ class PertaminaController extends GetxController {
   void increment() => count.value++;
 
   Future<void> saveData() async {
-    // Gunakan ukuran kertas 58mm
     bool connectionStatus = await PrintBluetoothThermal.connectionStatus;
-//     print("Status Koneksi: $connectionStatus");
-//     print("ID Nota: ${idNota.text}");
-//     print("Alamat 1: ${alamat1.text}");
-//     print("Alamat 2: ${alamat2.text}");
-//     print("Shift: ${shift.text}");
-//     print("No. Transaksi: ${noTransaksi.text}");
-//     print("Tanggal: ${tanggal.text}");
-//     print("Waktu: ${waktu.text}");
-//     print("Pulau/Pompa: ${pompa.text}");
-   
-//  print("Nama Produk: ${namaProduk.text}");
-//     print("Harga/Liter: ${hargaLiter.text}");
-//     print("Volume: ${volume.text}");
-//     print("Total Harga: ${totalHarga.text}");
-//     print("Operator: ${operatorName.text}");
-//     print("Cash: ${cash.text}");
-//     print("No. Plat: ${noPlat.text}");
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     bool result = await prefs.setString('idNota', idNota.text);
-//     if (result) {
-//       print('idNota berhasil disimpan');
-//     } else {
-//       print('Gagal menyimpan idNota');
-//     }
-//     await prefs.setString('alamat1', alamat1.text);
-//     await prefs.setString('alamat2', alamat2.text);
-//     await prefs.setString('shift', shift.text);
-//     await prefs.setString('noTransaksi', noTransaksi.text);
-//     await prefs.setString('tanggal', tanggal.text);
-//     await prefs.setString('waktu', waktu.text);
-//     await prefs.setString('pompa', pompa.text);
-//     await prefs.setString('namaProduk', namaProduk.text);
-//     await prefs.setString('hargaLiter', hargaLiter.text);
-//     await prefs.setString('volume', volume.text);
-//     await prefs.setString('totalHarga', totalHarga.text);
-//     await prefs.setString('operatorName', operatorName.text);
-//     await prefs.setString('cash', cash.text);
-//     await prefs.setString('noPlat', noPlat.text);
     try {
       if (connectionStatus) {
         List<int> bytesToPrint = [];
@@ -472,57 +431,17 @@ class PertaminaController extends GetxController {
 
 
         print("Data berhasil dicetak di printer.");
+        await PrintBluetoothThermal.disconnect;
+        await PrintBluetoothThermal.connect(macPrinterAddress: '66:32:20:59:77:3F');
+
+        Get.snackbar('Succes', 'Berhasil print');
       } else {
         print("Printer tidak terhubung.");
+        Get.snackbar('Error', 'Printer tidak terhubung');
       }
     } catch (e) {
       print("Error saat mencetak: $e");
+      Get.snackbar('Error', '$e');
     }
   }
-
-  // Future<void> saveDataform() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //    bool result = await prefs.setString('idNota', idNota.text);
-  // if (result) {
-  //   print('idNota berhasil disimpan');
-  // } else {
-  //   print('Gagal menyimpan idNota');
-  // }
-  //   await prefs.setString('idNota', idNota.text);
-  //   await prefs.setString('alamat1', alamat1.text);
-  //   await prefs.setString('alamat2', alamat2.text);
-  //   await prefs.setString('shift', shift.text);
-  //   await prefs.setString('noTransaksi', noTransaksi.text);
-  //   await prefs.setString('tanggal', tanggal.text);
-  //   await prefs.setString('waktu', waktu.text);
-  //   await prefs.setString('pompa', pompa.text);
-  //   await prefs.setString('namaProduk', namaProduk.text);
-  //   await prefs.setString('hargaLiter', hargaLiter.text);
-  //   await prefs.setString('volume', volume.text);
-  //   await prefs.setString('totalHarga', totalHarga.text);
-  //   await prefs.setString('operatorName', operatorName.text);
-  //   await prefs.setString('cash', cash.text);
-  //   await prefs.setString('noPlat', noPlat.text);
-  // }
-
-  // Future<void> loadData() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  // idNota.text = prefs.getString('idNota') ?? '';
-  //   alamat1.text = prefs.getString('alamat1') ?? '';
-  //   alamat2.text = prefs.getString('alamat2') ?? '';
-  //   shift.text = prefs.getString('shift') ?? '';
-  //   noTransaksi.text = prefs.getString('noTransaksi') ?? '';
-  //   tanggal.text = prefs.getString('tanggal') ?? '';
-  //   waktu.text = prefs.getString('waktu') ?? '';
-  //   pompa.text = prefs.getString('pompa') ?? '';
-  //   namaProduk.text = prefs.getString('namaProduk') ?? '';
-  //   hargaLiter.text = prefs.getString('hargaLiter') ?? '';
-  //   volume.text = prefs.getString('volume') ?? '';
-  //   totalHarga.text = prefs.getString('totalHarga') ?? '';
-  //   operatorName.text = prefs.getString('operatorName') ?? '';
-  //   cash.text = prefs.getString('cash') ?? '';
-  //   noPlat.text = prefs.getString('noPlat') ?? '';
-  // }
-
-
 }

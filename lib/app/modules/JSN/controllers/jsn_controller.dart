@@ -80,18 +80,18 @@ class JsnController extends GetxController {
         // Resize the image
         img.Image resizedImage = img.copyResize(originalImage!, height: 90);
 
-        // Save resized image to a file (optional, if needed)
-        final Uint8List resizedBytes = img.encodePng(resizedImage);
+     final Uint8List resizedBytes = img.encodePng(resizedImage);
         final directory = await getTemporaryDirectory();
         final String tempPath = '${directory.path}/resized_image.png';
         final File file = File(tempPath);
-        final imgFile = await file.writeAsBytes(resizedBytes); // Save the resized image
-        img.Image? image = img.decodeImage(File(file.path).readAsBytesSync());
+        await file.writeAsBytes(resizedBytes);
 
         // Print image using generator.imageRaster
         // bytesToPrint += generator.imageRaster(File(file.path), align: PosAlign.left);
 
-        await bluetoothController.printer.printImage(file.path);
+        // await bluetoothController.printer.printImage(file.path);
+        // await printer.printImage(file.path);
+        await printer.printImageBytes(resizedBytes);
 
         bytesToPrint += generator.text(
           asal1.value, // Teks normal
@@ -251,18 +251,25 @@ class JsnController extends GetxController {
 
 
 
-        bytesToPrint += generator.cut();
+       bytesToPrint += generator.cut();
 
         // Kirim perintah ke printer
         await PrintBluetoothThermal.writeBytes(bytesToPrint);
 
 
         print("Data berhasil dicetak di printer.");
+        await PrintBluetoothThermal.disconnect;
+        await PrintBluetoothThermal.connect(macPrinterAddress: '66:32:20:59:77:3F');
+        Get.snackbar('Succes', 'Berhasil print');
       } else {
         print("Printer tidak terhubung.");
+        Get.snackbar('Error', 'Printer tidak terhubung');
       }
     } catch (e) {
       print("Error saat mencetak: $e");
+      Get.snackbar('Error', '$e');
     }
   }
+  
+
   }

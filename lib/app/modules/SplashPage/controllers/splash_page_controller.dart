@@ -24,7 +24,7 @@ class SplashPageController extends GetxController {
   void _navigateToNextPage() {
     Future.delayed(const Duration(seconds: 5), () {
       print("Navigating to HomeView");
-      Get.off(
+       Get.offAll(
         () => HomeView(),
         transition: Transition.upToDown, // Menambahkan animasi geser
         duration: const Duration(milliseconds: 1200), // Durasi animasi

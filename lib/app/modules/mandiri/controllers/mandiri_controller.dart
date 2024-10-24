@@ -32,7 +32,6 @@ class MandiriController extends GetxController {
   var total = ''.obs;
   var saldoAwal = ''.obs; // Mengganti nama dari operator menjadi operatorName
   var saldoAkhir = ''.obs;
-  BlueThermalPrinter printer = BlueThermalPrinter.instance;
   final BluetoothSettingController bluetoothController = Get.put(BluetoothSettingController());
 
   final count = 0.obs;
@@ -322,13 +321,17 @@ class MandiriController extends GetxController {
        
 
         // bytesToPrint += generator.feed(11); // Atau gunakan printNewLine() tergantung library
-        bytesToPrint += generator.cut();
+       bytesToPrint += generator.cut();
 
         // Kirim perintah ke printer
         await PrintBluetoothThermal.writeBytes(bytesToPrint);
 
 
         print("Data berhasil dicetak di printer.");
+        await PrintBluetoothThermal.disconnect;
+        await PrintBluetoothThermal.connect(macPrinterAddress: '66:32:20:59:77:3F');
+
+        Get.snackbar('Succes', 'Berhasil print');
       } else {
         print("Printer tidak terhubung.");
       }

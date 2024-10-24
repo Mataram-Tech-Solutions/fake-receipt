@@ -249,6 +249,8 @@ class TmjController extends GetxController {
 
 
         print("Data berhasil dicetak di printer.");
+        await PrintBluetoothThermal.disconnect;
+        await PrintBluetoothThermal.connect(macPrinterAddress: '66:32:20:59:77:3F');
       } else {
         print("Printer tidak terhubung.");
       }
