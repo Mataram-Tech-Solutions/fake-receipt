@@ -63,7 +63,7 @@ class _HomeViewState extends State<HomeView> {
                     size: 24,
                   ),
                   onPressed: () {
-                    Get.to(() => BluetoothSettingPage());
+                    Get.to(() => BluetoothSettingsPage());
                   },
                 )
               ],

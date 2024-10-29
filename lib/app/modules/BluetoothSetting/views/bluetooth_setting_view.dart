@@ -11,8 +11,104 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:collection/collection.dart';  // Tambahkan ini untuk firstWhereOrNull
 import '../controllers/bluetooth_setting_controller.dart';
 
-class BluetoothSettingPage extends StatelessWidget {
-  final BluetoothSettingController controller = Get.put(BluetoothSettingController());
+class BluetoothSettingsPage extends StatefulWidget {
+  @override
+  _BluetoothSettingsPageState createState() => _BluetoothSettingsPageState();
+}
+
+class _BluetoothSettingsPageState extends State<BluetoothSettingsPage> {
+  // Akses ke controller
+  final BluetoothSettingController bluetoothController = Get.put(BluetoothSettingController());
+
+  List<BluetoothDevice> devices = [];
+  bool isLoading = false;
+  String? connectedAddress;
+
+  @override
+  void initState() {
+    super.initState();
+    getDevices();
+  }
+
+  Future<void> getDevices() async {
+    try {
+      devices = await bluetoothController.printer.getBondedDevices();
+      setState(() {});
+    } catch (e) {
+      Get.snackbar('Error', 'Gagal mendapatkan perangkat');
+    }
+  }
+
+  // Function untuk menghubungkan perangkat dan menyimpan koneksi
+  Future<void> connectToDevice(BluetoothDevice device) async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      await bluetoothController.connectToDevice(device); // Gunakan controller untuk menghubungkan
+      connectedAddress = device.address;
+    } catch (e) {
+      Get.snackbar('Error', 'Gagal terhubung');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  // Function untuk memutuskan koneksi perangkat
+  Future<void> disconnectFromDevice() async {
+    setState(() {
+      isLoading = true;
+    });
+    try {
+      await bluetoothController.printer.disconnect();
+      connectedAddress = null;
+      Get.snackbar('Success', 'Berhasil memutuskan koneksi');
+    } catch (e) {
+      Get.snackbar('Error', 'Gagal memutuskan koneksi');
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  // Function untuk mencetak test setelah koneksi berhasil
+  Future<void> testPrint() async {
+    try {
+      if (await bluetoothController.printer.isConnected ?? false) {
+        await bluetoothController.printer.printCustom('Printer Test By MATARAMTECH', 1, 1);
+
+        // Load image from assets
+        final ByteData data = await rootBundle.load('assets/logo.png');
+        final Uint8List bytes = data.buffer.asUint8List();
+
+        // Decode image
+        img.Image? originalImage = img.decodeImage(bytes);
+        img.Image resizedImage = img.copyResize(originalImage!, height: 250, width: 250);
+
+        // Convert to PNG
+        final Uint8List resizedBytes = img.encodePng(resizedImage);
+        final directory = await getTemporaryDirectory();
+        final String tempPath = '${directory.path}/resized_image.png';
+        final File file = File(tempPath);
+        await file.writeAsBytes(resizedBytes);
+
+        // Print image
+        await bluetoothController.printer.printImage(tempPath);
+        for (int i = 0; i < 10; i++) {
+          await bluetoothController.printer.printNewLine();
+        }
+
+        Get.snackbar('Success', 'Print test completed');
+      } else {
+        Get.snackbar('Error', 'Printer not connected');
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Print failed: ${e.toString()}');
+    }
+  }
 
   // Menentukan icon berdasarkan tipe perangkat
   IconData getDeviceIcon(BluetoothDevice device) {
@@ -48,11 +144,11 @@ class BluetoothSettingPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Expanded(
-              child: controller.devices.isNotEmpty
+              child: devices.isNotEmpty
                   ? ListView.builder(
-                itemCount: controller.devices.length,
+                itemCount: devices.length,
                 itemBuilder: (context, index) {
-                  final device = controller.devices[index];
+                  final device = devices[index];
                   return Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12.0),
@@ -81,57 +177,59 @@ class BluetoothSettingPage extends StatelessWidget {
                           fontSize: 14,
                         ),
                       ),
-                      trailing: controller.isLoading.value
+                      trailing: isLoading
                           ? CircularProgressIndicator()
                           : Obx(() {
-                            // Kondisi ketika perangkat terhubung
-                            if (controller.isConnected.value && controller.connectedDevice?.address == device.address) {
-                              return Column(
-                                children: [
-                                  ElevatedButton(
-                                    key: ValueKey('TestPrintButton'),
-                                    onPressed: controller.testPrint,
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.orange,
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 20,
-                                        vertical: 12,
-                                      ),
-                                    ),
-                                    child: Text('Test Print'),
-                                  ),
-                                  ElevatedButton(
-                                    key: ValueKey('DisconnectButton'),
-                                    onPressed: controller.disconnectFromDevice,
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.red,
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 20,
-                                        vertical: 12,
-                                      ),
-                                    ),
-                                    child: Text('Disconnect'),
-                                  ),
-                                ],
-                              );
-                            } else {
-                              // Tombol untuk menghubungkan perangkat
-                              return ElevatedButton(
-                                key: ValueKey('ConnectButton'),
-                                onPressed: () async {
-                                  await controller.connectToDevice(device);
-                                },
+                        // Kondisi ketika perangkat terhubung
+                        if (bluetoothController.isConnected.value && bluetoothController.connectedDevice?.address == device.address) {
+                          return Column(
+                            children: [
+                              ElevatedButton(
+                                key: ValueKey('TestPrintButton'),
+                                onPressed: testPrint,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue,
+                                  backgroundColor: Colors.orange,
                                   padding: EdgeInsets.symmetric(
                                     horizontal: 20,
                                     vertical: 12,
                                   ),
                                 ),
-                                child: Text('Connect'),
-                              );
-                            }
-                          }),
+                                child: Text('Test Print'),
+                              ),
+                              // ElevatedButton(
+                              //   key: ValueKey('DisconnectButton'),
+                              //   onPressed: () async {
+                              //     await disconnectFromDevice();
+                              //   },
+                              //   style: ElevatedButton.styleFrom(
+                              //     backgroundColor: Colors.red,
+                              //     padding: EdgeInsets.symmetric(
+                              //       horizontal: 20,
+                              //       vertical: 12,
+                              //     ),
+                              //   ),
+                              //   child: Text('Disconnect'),
+                              // ),
+                            ],
+                          );
+                        } else {
+                          // Tombol untuk menghubungkan perangkat
+                          return ElevatedButton(
+                            key: ValueKey('ConnectButton'),
+                            onPressed: () async {
+                              await connectToDevice(device);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 12,
+                              ),
+                            ),
+                            child: Text('Connect'),
+                          );
+                        }
+                      }),
                     ),
                   );
                 },

@@ -36,7 +36,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.BLUETOOTH_SETTING,
-      page: () => BluetoothSettingPage(),
+      page: () => BluetoothSettingsPage(),
       binding: BluetoothSettingBinding(),
     ),
     GetPage(

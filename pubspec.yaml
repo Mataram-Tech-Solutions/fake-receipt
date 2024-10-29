@@ -50,14 +50,25 @@ dependencies:
 #  bluetooth_thermal_printer: ^1.0.0 # Contoh versi terbaru
   blue_thermal_printer: ^1.2.3
   thermal_printer: ^1.0.5
+  icons_launcher: ^3.0.0
 
 dependency_overrides:
   image: ^4.2.0
 
 
 dev_dependencies:
+  flutter_launcher_icons: "^0.14.1"
   flutter_test:
     sdk: flutter
+
+icons_launcher:
+  image_path: "assets/logo2.png"
+  platforms:
+    android:
+      enable: true
+    ios:
+      enable: true
+
 
 
 
